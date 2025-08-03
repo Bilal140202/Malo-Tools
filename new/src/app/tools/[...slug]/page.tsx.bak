@@ -1,0 +1,623 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { useParams, useRouter } from 'next/navigation';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { ArrowLeft, Download, Share2 } from 'lucide-react';
+import Link from 'next/link';
+
+interface Tool {
+  name: string;
+  description: string;
+  category: string;
+}
+
+const tools: Record<string, Tool> = {
+  'qr-code-generator': {
+    name: 'QR Code Generator',
+    description: 'Generate QR codes for links, text, and more',
+    category: 'generator'
+  },
+  'calculator': {
+    name: 'Calculator',
+    description: 'Basic calculator',
+    category: 'calculator'
+  },
+  'json-formatter': {
+    name: 'JSON Formatter',
+    description: 'Format and validate JSON',
+    category: 'development'
+  },
+  'temperature-converter': {
+    name: 'Temperature Converter',
+    description: 'Convert temperature units',
+    category: 'converter'
+  },
+  'word-counter': {
+    name: 'Word Counter',
+    description: 'Count words and characters',
+    category: 'productivity'
+  },
+  'unit-converter': {
+    name: 'Unit Converter',
+    description: 'Convert various units',
+    category: 'converter'
+  },
+  'image-to-pdf': {
+    name: 'Image to PDF',
+    description: 'Convert images to PDF',
+    category: 'converter'
+  },
+  'stopwatch': {
+    name: 'Stopwatch',
+    description: 'Online stopwatch timer',
+    category: 'productivity'
+  },
+  'age-calculator': {
+    name: 'Age Calculator',
+    description: 'Calculate age from date of birth',
+    category: 'calculator'
+  },
+  'barcode-generator': {
+    name: 'Barcode Generator',
+    description: 'Create various types of barcodes',
+    category: 'generator'
+  }
+};
+
+export default function ToolPage() {
+  const params = useParams();
+  const router = useRouter();
+  const slug = params.slug as string;
+  const [activeTool, setActiveTool] = useState<string>('');
+
+  useEffect(() => {
+    if (slug) {
+      setActiveTool(slug);
+    }
+  }, [slug]);
+
+  const tool = tools[activeTool];
+
+  if (!tool) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center">
+        <Card className="max-w-md">
+          <CardHeader>
+            <CardTitle>Tool Not Found</CardTitle>
+            <CardDescription>The requested tool could not be found.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Link href="/">
+              <Button className="w-full">
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Back to Tools
+              </Button>
+            </Link>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+      {/* Header */}
+      <header className="bg-white shadow-sm border-b border-slate-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <Link href="/">
+                <Button variant="ghost" size="sm">
+                  <ArrowLeft className="mr-2 h-4 w-4" />
+                  Back to Tools
+                </Button>
+              </Link>
+              <div>
+                <h1 className="text-xl font-bold text-slate-900">{tool.name}</h1>
+                <div className="flex items-center space-x-2 mt-1">
+                  <Badge className="bg-purple-100 text-purple-800">
+                    {tool.category}
+                  </Badge>
+                  <span className="text-sm text-slate-500">No signup required</span>
+                </div>
+              </div>
+            </div>
+            <div className="flex space-x-2">
+              <Button variant="outline" size="sm">
+                <Share2 className="mr-2 h-4 w-4" />
+                Share
+              </Button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+          {/* Tool Content */}
+          <div className="lg:col-span-3">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-2xl">{tool.name}</CardTitle>
+                <CardDescription className="text-base">
+                  {tool.description}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {activeTool === 'qr-code-generator' && (
+                  <QRCodeGenerator />
+                )}
+                {activeTool === 'calculator' && (
+                  <Calculator />
+                )}
+                {activeTool === 'json-formatter' && (
+                  <JSONFormatter />
+                )}
+                {activeTool === 'temperature-converter' && (
+                  <TemperatureConverter />
+                )}
+                {activeTool === 'word-counter' && (
+                  <WordCounter />
+                )}
+                {activeTool === 'unit-converter' && (
+                  <UnitConverter />
+                )}
+                {activeTool === 'image-to-pdf' && (
+                  <ImageToPDF />
+                )}
+                {activeTool === 'stopwatch' && (
+                  <Stopwatch />
+                )}
+                {activeTool === 'age-calculator' && (
+                  <AgeCalculator />
+                )}
+                {activeTool === 'barcode-generator' && (
+                  <BarcodeGenerator />
+                )}
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Sidebar */}
+          <div className="lg:col-span-1">
+            <div className="space-y-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">About This Tool</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div>
+                    <h4 className="font-medium text-slate-900">Category</h4>
+                    <p className="text-sm text-slate-600">{tool.category}</p>
+                  </div>
+                  <div>
+                    <h4 className="font-medium text-slate-900">Description</h4>
+                    <p className="text-sm text-slate-600">{tool.description}</p>
+                  </div>
+                  <div>
+                    <h4 className="font-medium text-slate-900">Features</h4>
+                    <ul className="text-sm text-slate-600 space-y-1">
+                      <li>• Easy to use</li>
+                      <li>• Instant results</li>
+                      <li>• Free forever</li>
+                      <li>• No registration required</li>
+                    </ul>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Popular Tools</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-2">
+                  <Link href="/tools/qr-code-generator">
+                    <Button variant="ghost" className="w-full justify-start">
+                      QR Code Generator
+                    </Button>
+                  </Link>
+                  <Link href="/tools/calculator">
+                    <Button variant="ghost" className="w-full justify-start">
+                      Calculator
+                    </Button>
+                  </Link>
+                  <Link href="/tools/json-formatter">
+                    <Button variant="ghost" className="w-full justify-start">
+                      JSON Formatter
+                    </Button>
+                  </Link>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+}
+
+// QR Code Generator Component
+function QRCodeGenerator() {
+  const [text, setText] = useState('');
+  const [qrCodeUrl, setQrCodeUrl] = useState('');
+
+  const generateQR = () => {
+    if (text.trim()) {
+      // Using a QR code API service
+      const url = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(text)}`;
+      setQrCodeUrl(url);
+    }
+  };
+
+  const downloadQR = () => {
+    if (qrCodeUrl) {
+      const link = document.createElement('a');
+      link.href = qrCodeUrl;
+      link.download = 'qrcode.png';
+      link.click();
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-2">
+              Enter text or URL
+            </label>
+            <Input
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              placeholder="https://example.com or any text"
+              className="w-full"
+            />
+          </div>
+          <Button onClick={generateQR} className="w-full">
+            Generate QR Code
+          </Button>
+        </div>
+        
+        <div className="flex flex-col items-center justify-center">
+          {qrCodeUrl ? (
+            <div className="text-center">
+              <img src={qrCodeUrl} alt="Generated QR Code" className="border rounded-lg mb-4" />
+              <Button onClick={downloadQR} variant="outline" size="sm">
+                <Download className="mr-2 h-4 w-4" />
+                Download
+              </Button>
+            </div>
+          ) : (
+            <div className="text-center text-slate-400">
+              <div className="w-48 h-48 border-2 border-dashed border-slate-300 rounded-lg flex items-center justify-center mb-4">
+                <span>QR Code will appear here</span>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Calculator Component
+function Calculator() {
+  const [display, setDisplay] = useState('0');
+  const [previousValue, setPreviousValue] = useState<number | null>(null);
+  const [operation, setOperation] = useState<string | null>(null);
+  const [waitingForOperand, setWaitingForOperand] = useState(false);
+
+  const inputNumber = (num: string) => {
+    if (waitingForOperand) {
+      setDisplay(num);
+      setWaitingForOperand(false);
+    } else {
+      setDisplay(display === '0' ? num : display + num);
+    }
+  };
+
+  const inputOperation = (nextOperation: string) => {
+    const inputValue = parseFloat(display);
+
+    if (previousValue === null) {
+      setPreviousValue(inputValue);
+    } else if (operation) {
+      const currentValue = previousValue || 0;
+      const newValue = calculate(currentValue, inputValue, operation);
+
+      setDisplay(String(newValue));
+      setPreviousValue(newValue);
+    }
+
+    setWaitingForOperand(true);
+    setOperation(nextOperation);
+  };
+
+  const calculate = (firstValue: number, secondValue: number, operation: string) => {
+    switch (operation) {
+      case '+':
+        return firstValue + secondValue;
+      case '-':
+        return firstValue - secondValue;
+      case '*':
+        return firstValue * secondValue;
+      case '/':
+        return firstValue / secondValue;
+      default:
+        return secondValue;
+    }
+  };
+
+  const handleEquals = () => {
+    const inputValue = parseFloat(display);
+
+    if (previousValue !== null && operation) {
+      const newValue = calculate(previousValue, inputValue, operation);
+      setDisplay(String(newValue));
+      setPreviousValue(null);
+      setOperation(null);
+      setWaitingForOperand(true);
+    }
+  };
+
+  const clear = () => {
+    setDisplay('0');
+    setPreviousValue(null);
+    setOperation(null);
+    setWaitingForOperand(false);
+  };
+
+  return (
+    <div className="grid grid-cols-4 gap-2 max-w-sm mx-auto">
+      <div className="col-span-4">
+        <Input
+          value={display}
+          readOnly
+          className="text-right text-2xl h-16"
+        />
+      </div>
+      
+      <Button variant="outline" onClick={clear} className="col-span-2">
+        Clear
+      </Button>
+      <Button variant="outline" onClick={() => inputOperation('/')}>÷</Button>
+      <Button variant="outline" onClick={() => inputOperation('*')}>×</Button>
+      
+      <Button variant="outline" onClick={() => inputNumber('7')}>7</Button>
+      <Button variant="outline" onClick={() => inputNumber('8')}>8</Button>
+      <Button variant="outline" onClick={() => inputNumber('9')}>9</Button>
+      <Button variant="outline" onClick={() => inputOperation('-')}>−</Button>
+      
+      <Button variant="outline" onClick={() => inputNumber('4')}>4</Button>
+      <Button variant="outline" onClick={() => inputNumber('5')}>5</Button>
+      <Button variant="outline" onClick={() => inputNumber('6')}>6</Button>
+      <Button variant="outline" onClick={() => inputOperation('+')}>+</Button>
+      
+      <Button variant="outline" onClick={() => inputNumber('1')}>1</Button>
+      <Button variant="outline" onClick={() => inputNumber('2')}>2</Button>
+      <Button variant="outline" onClick={() => inputNumber('3')}>3</Button>
+      <Button variant="outline" onClick={handleEquals} className="row-span-2">
+        =
+      </Button>
+      
+      <Button variant="outline" onClick={() => inputNumber('0')} className="col-span-2">
+        0
+      </Button>
+      <Button variant="outline" onClick={() => inputNumber('.')}>.</Button>
+    </div>
+  );
+}
+
+// JSON Formatter Component
+function JSONFormatter() {
+  const [input, setInput] = useState('');
+  const [output, setOutput] = useState('');
+  const [error, setError] = useState('');
+
+  const formatJSON = () => {
+    try {
+      const parsed = JSON.parse(input);
+      const formatted = JSON.stringify(parsed, null, 2);
+      setOutput(formatted);
+      setError('');
+    } catch (err) {
+      setError('Invalid JSON format');
+      setOutput('');
+    }
+  };
+
+  const minifyJSON = () => {
+    try {
+      const parsed = JSON.parse(input);
+      const minified = JSON.stringify(parsed);
+      setOutput(minified);
+      setError('');
+    } catch (err) {
+      setError('Invalid JSON format');
+      setOutput('');
+    }
+  };
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(output);
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-2">
+            Input JSON
+          </label>
+          <textarea
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="Paste your JSON here..."
+            className="w-full h-64 p-3 border border-slate-300 rounded-lg resize-none font-mono text-sm"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-2">
+            Formatted JSON
+          </label>
+          <textarea
+            value={output}
+            readOnly
+            placeholder="Formatted JSON will appear here..."
+            className="w-full h-64 p-3 border border-slate-300 rounded-lg resize-none font-mono text-sm bg-slate-50"
+          />
+        </div>
+      </div>
+      
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+          {error}
+        </div>
+      )}
+      
+      <div className="flex flex-wrap gap-2">
+        <Button onClick={formatJSON}>Format JSON</Button>
+        <Button onClick={minifyJSON} variant="outline">Minify JSON</Button>
+        <Button onClick={copyToClipboard} variant="outline" disabled={!output}>
+          Copy to Clipboard
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+// Temperature Converter Component
+function TemperatureConverter() {
+  const [celsius, setCelsius] = useState('');
+  const [fahrenheit, setFahrenheit] = useState('');
+  const [kelvin, setKelvin] = useState('');
+
+  const convertFromCelsius = (value: string) => {
+    const c = parseFloat(value);
+    if (!isNaN(c)) {
+      setFahrenheit((c * 9/5 + 32).toFixed(2));
+      setKelvin((c + 273.15).toFixed(2));
+    } else {
+      setFahrenheit('');
+      setKelvin('');
+    }
+  };
+
+  const convertFromFahrenheit = (value: string) => {
+    const f = parseFloat(value);
+    if (!isNaN(f)) {
+      setCelsius(((f - 32) * 5/9).toFixed(2));
+      setKelvin(((f - 32) * 5/9 + 273.15).toFixed(2));
+    } else {
+      setCelsius('');
+      setKelvin('');
+    }
+  };
+
+  const convertFromKelvin = (value: string) => {
+    const k = parseFloat(value);
+    if (!isNaN(k)) {
+      setCelsius((k - 273.15).toFixed(2));
+      setFahrenheit(((k - 273.15) * 9/5 + 32).toFixed(2));
+    } else {
+      setCelsius('');
+      setFahrenheit('');
+    }
+  };
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div>
+        <label className="block text-sm font-medium text-slate-700 mb-2">
+          Celsius (°C)
+        </label>
+        <Input
+          type="number"
+          value={celsius}
+          onChange={(e) => convertFromCelsius(e.target.value)}
+          placeholder="0"
+        />
+      </div>
+      <div>
+        <label className="block text-sm font-medium text-slate-700 mb-2">
+          Fahrenheit (°F)
+        </label>
+        <Input
+          type="number"
+          value={fahrenheit}
+          onChange={(e) => convertFromFahrenheit(e.target.value)}
+          placeholder="32"
+        />
+      </div>
+      <div>
+        <label className="block text-sm font-medium text-slate-700 mb-2">
+          Kelvin (K)
+        </label>
+        <Input
+          type="number"
+          value={kelvin}
+          onChange={(e) => convertFromKelvin(e.target.value)}
+          placeholder="273.15"
+        />
+      </div>
+    </div>
+  );
+}
+
+// Word Counter Component
+function WordCounter() {
+  const [text, setText] = useState('');
+
+  const wordCount = text.trim() ? text.trim().split(/\s+/).length : 0;
+  const charCount = text.length;
+  const charCountNoSpaces = text.replace(/\s/g, '').length;
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <label className="block text-sm font-medium text-slate-700 mb-2">
+          Enter your text
+        </label>
+        <textarea
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          placeholder="Start typing here..."
+          className="w-full h-48 p-3 border border-slate-300 rounded-lg resize-none"
+        />
+      </div>
+      
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Card>
+          <CardContent className="pt-6">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-blue-600">{wordCount}</div>
+              <div className="text-sm text-slate-600">Words</div>
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardContent className="pt-6">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-green-600">{charCount}</div>
+              <div className="text-sm text-slate-600">Characters (with spaces)</div>
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardContent className="pt-6">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-purple-600">{charCountNoSpaces}</div>
+              <div className="text-sm text-slate-600">Characters (no spaces)</div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+}
