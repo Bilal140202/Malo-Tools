@@ -197,7 +197,7 @@ export default function FrequencyTableBuilder() {
   };
 
   const copyToClipboard = (text: string) => {
-    navigator clipboard.writeText(text);
+    navigator.clipboard.writeText(text);
     alert('Data copied to clipboard!');
   };
 
